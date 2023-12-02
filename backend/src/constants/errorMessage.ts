@@ -1,0 +1,9 @@
+export const PERMISSION_ERR_MSG = 'You not allowed to access this resource';
+export const AUTH_ERR_MSG = 'You are not authenticated';
+export const AUTHORIZATION_ERR_MSG = 'You are not authorized';
+export const FORBIDDEN_ERR_MSG = "You don't have access";
+export const CLIENT_ERR_MSG = 'Client error';
+export const INVARIANT_ERR_MSG = 'Invariant error';
+export const NOT_FOUND_ERR_MSG = 'Not found error';
+export const TOKEN_INVALID_ERR_MSG = 'Token invalid';
+export const TOKEN_EXPIRED_ERR_MSG = 'Token expired';
