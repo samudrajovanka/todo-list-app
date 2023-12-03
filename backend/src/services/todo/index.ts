@@ -1,6 +1,6 @@
 import NotFoundError from "../../exceptions/NotFoundError";
 import TodoRepository from "../../repositories/todo";
-import { CreateTodoData, GetTodoResponse, UpdateTodoData } from "../../repositories/todo/types";
+import { CreateTodoData, GetAllCondition, GetTodoResponse, UpdateTodoData } from "../../repositories/todo/types";
 import { prismaErrorHandling } from "../../lib/prisma/errorHandling";
 import { SplitStatusCompleteTask, TodoFormatedStatusCompleteTask } from "./types";
 import { Task } from "@prisma/client";
@@ -26,18 +26,11 @@ export default class TodoService {
     return tasksSplited;
   }
 
-  static async getAll(userId: string) {
-    const todos = await TodoRepository.getAll(userId);
+  static async getAll(userId: string, condition?: GetAllCondition) {
+    console.log(condition)
+    const todos = await TodoRepository.getAll(userId, condition);
 
-    const todosFormatedStatusTask: TodoFormatedStatusCompleteTask[] = [];
-    for (const todo of todos) {
-      todosFormatedStatusTask.push({
-        ...todo,
-        tasks: this.splitStatusCompleteTask(todo.tasks)
-      });
-    }
-    
-    return todosFormatedStatusTask;
+    return todos;
   }
 
   static async getDetail(todoId: string, userId: string) {

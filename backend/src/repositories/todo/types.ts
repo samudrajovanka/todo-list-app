@@ -10,5 +10,11 @@ export type GetTodoResponse = Todo & {
   tasks: Task[]
 };
 
-export type GetTodosResponse = GetTodoResponse[];
+export type GetTodosResponse = Todo & {
+  completedTotal: number;
+  uncompletedTotal: number;
+}[];
 
+export type GetAllCondition = {
+  isPinned?: boolean;
+};

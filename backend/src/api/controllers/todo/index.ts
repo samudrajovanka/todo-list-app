@@ -28,7 +28,10 @@ export default class TodoController {
 
   static async getAll(req: Request, res: ExpressResponse, next: NextFunction) {
     try {
-      const todos = await TodoService.getAll(req.user!.id);
+      const todos = await TodoService.getAll(req.user!.id, {
+        ...req.query,
+        isPinned: req.query?.isPinned === 'true' ? true : false
+      });
 
       return res.status(200).json(
         Response.success({

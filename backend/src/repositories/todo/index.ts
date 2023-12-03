@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../../lib/prisma";
-import { CreateTodoData, GetTodoResponse, GetTodosResponse, UpdateTodoData } from "./types";
+import { CreateTodoData, GetAllCondition, GetTodoResponse, GetTodosResponse, UpdateTodoData } from "./types";
 
 export default class TodoRepository {
   static async create(data: CreateTodoData) {
@@ -32,17 +32,25 @@ export default class TodoRepository {
     ]
   }
 
-  static async getAll(userId: string): Promise<GetTodosResponse> {
-    const todos = await prisma.todo.findMany({
-      where: {
-        createdBy: userId
-      },
-      include: {
-        tasks: {
-          orderBy: this.getOrderTaskQuery()
-        }
-      }
-    });
+  static async getAll(userId: string, condition?: GetAllCondition): Promise<GetTodosResponse> {
+    const conditionQuery = condition
+      ? Prisma.sql` and
+        ${typeof condition?.isPinned === 'boolean' ? Prisma.sql`o."isPinned" = ${condition.isPinned}` : null}`
+      : null;
+    
+    console.log("cond", conditionQuery);
+
+    const todos = await prisma.$queryRaw<GetTodosResponse>`
+      select
+        o.*,
+        count(*) FILTER ( WHERE a."isCompleted" = true )::text as "completedTotal",
+        count(*) FILTER ( WHERE a."isCompleted" = false )::text as "uncompletedTotal"
+      from "Task" as a
+      join "Todo" as o
+      on o.id = a."todoId"
+      where o."createdBy" = ${userId}
+      ${Prisma.sql`${conditionQuery}`}
+      group by o.id;`
 
     return todos;
   }
